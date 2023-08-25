@@ -1,16 +1,21 @@
-package Entity;
+package entity;
 
 import java.util.Date;
 
 public class Note implements Cloneable {
-    private int noteId = 0;
-    private int ownerId = 0;
-    private String title = "";
-    private String text = "";
-    private boolean isPublic = false;
-    private boolean isDeleted = false;
+    private int noteId;
+    private int ownerId;
+    private String title;
+    private String text;
+    private boolean isPublic;
+    private boolean isDeleted;
     private Date created = new Date();
     private Date modified = new Date();
+
+    public Note(int ownerId, String title) {
+        this.setOwnerId(ownerId);
+        this.setTitle(title);
+    }
 
     public int getNoteId() {
         return noteId;

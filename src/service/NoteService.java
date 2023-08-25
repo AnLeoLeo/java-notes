@@ -1,12 +1,11 @@
-package Service;
+package service;
 
-import Entity.Note;
-import Entity.Share;
-import Entity.User;
-import Repository.NoteRepository;
+import entity.Note;
+import entity.Share;
+import entity.User;
+import repository.NoteRepository;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class NoteService {
 
@@ -37,12 +36,8 @@ public class NoteService {
         return personalNotes;
     }
 
-    public int addNote(String title, String text, int userId) {
-        Note userNote = new Note();
-        userNote.setOwnerId(userId);
-        userNote.setCreated(new Date());
-        userNote.setModified(new Date());
-        userNote.setTitle(title);
+    public int add(String title, String text, int userId) {
+        Note userNote = new Note(userId, title);
         userNote.setText(text);
 
         int noteId = this.noteRepository.saveNote(userNote);
@@ -53,12 +48,14 @@ public class NoteService {
         return noteId;
     }
 
-    public void shareNote(Note note, User user) {
-        Share share = new Share();
-        share.setNoteId(note.getNoteId());
-        share.setUserId(user.getUserId());
+    public void share(Note note, User user) {
+        Share share = new Share(note.getNoteId(), user.getUserId());
         if (!this.noteRepository.saveShare(share)) {
             throw new RuntimeException("Не удалось поделиться заметкой.");
         }
+    }
+
+    public Note get(int noteId) {
+        return this.noteRepository.getNoteById(noteId);
     }
 }

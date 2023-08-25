@@ -1,11 +1,16 @@
-package Entity;
+package entity;
 
 import java.util.Date;
 
 public class Share {
-    private int userId = 0;
-    private int noteId = 0;
+    private int userId;
+    private int noteId;
     private Date modified = new Date();
+
+    public Share(int noteId, int userId) {
+        this.setUserId(userId);
+        this.setNoteId(noteId);
+    }
 
     public int getUserId() {
         return userId;

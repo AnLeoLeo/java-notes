@@ -4,7 +4,9 @@ public class Main {
         int secondUserId = (int)Math.floor(Math.random() * 10);
 
         try {
-            Notebook notebook = new Notebook();
+            DI registry = new DI();
+
+            Notebook notebook = (Notebook)registry.getInstance(Notebook.class.getName());
 
             // Открыли для пользователя 1.
             notebook.openForUserId(firstUserId);

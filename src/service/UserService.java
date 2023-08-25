@@ -1,7 +1,7 @@
-package Service;
+package service;
 
-import Entity.User;
-import Repository.UserRepository;
+import entity.User;
+import repository.UserRepository;
 
 public class UserService {
 
@@ -22,5 +22,13 @@ public class UserService {
         }
 
         return loggedUser;
+    }
+
+    public User get(int userId) {
+        return this.userRepository.findUserById(userId);
+    }
+
+    public String generateFakeLoginByUserId(int userId) {
+        return this.userRepository.getLogin(userId);
     }
 }

@@ -1,29 +1,22 @@
-import Entity.Note;
-import Repository.NoteRepository;
-import Repository.UserRepository;
-import Service.NoteService;
-import Service.UserService;
-import Entity.User;
+import entity.Note;
+import service.NoteService;
+import service.UserService;
+import entity.User;
 
-import java.util.Date;
 import java.util.List;
 
 public class Notebook {
-    final NoteRepository noteRepository;
-    final UserRepository userRepository;
-    final NoteService noteService;
-    final UserService userService;
+    private final NoteService noteService;
+    private final UserService userService;
     private User currentUser = new User();
 
-    public Notebook() {
-        this.noteRepository = new NoteRepository();
-        this.userRepository = new UserRepository();
-        this.noteService = new NoteService(this.noteRepository);
-        this.userService = new UserService(this.userRepository);
+    public Notebook(NoteService noteService, UserService userService) {
+        this.noteService = noteService;
+        this.userService = userService;
     }
 
     public void openForUserId(int userId) {
-        this.currentUser = this.userService.login(this.userRepository.getLogin(userId));
+        this.currentUser = this.userService.login(this.userService.generateFakeLoginByUserId(userId));
         if (this.currentUser.isAdmin()) {
             System.out.println("Сегодня я админ и вижу всё.\n");
         }
@@ -39,7 +32,7 @@ public class Notebook {
     public int addNote() {
         System.out.println("Добавим ещё одну");
 
-        return this.noteService.addNote(
+        return this.noteService.add(
                 "А такой заметки ещё не было",
                 "Как-то открыл я эту программу и написал её.",
                 this.currentUser.getUserId()
@@ -47,21 +40,23 @@ public class Notebook {
     }
 
     public void shareNote(int noteId, int userId) {
-        User user = this.userRepository.findUserById(userId);
+        User user = this.userService.get(userId);
         if (user.getUserId() <= 0) {
             throw new RuntimeException("Пользователь не найден.");
         }
         if (user.isAdmin()) {
             System.out.println("С админом не надо делиться, он и так всё видит.");
+            return;
         }
-        Note note = this.noteRepository.getNoteById(noteId);
+        Note note = this.noteService.get(noteId);
         if (note.getNoteId() <= 0) {
             throw new RuntimeException("Заметка не найдена.");
         }
         if (note.isPublic() || note.isDeleted()) {
             System.out.println("Такой заметкой поделиться нельзя.");
+            return;
         }
-        this.noteService.shareNote(note, user);
+        this.noteService.share(note, user);
 
         System.out.printf("Теперь заметку № %d видит пользователь %d.\n", noteId, userId);
     }

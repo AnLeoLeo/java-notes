@@ -1,8 +1,8 @@
-package Repository;
+package repository;
 
-import Entity.Note;
-import Entity.Share;
-import Entity.User;
+import entity.Note;
+import entity.Share;
+import entity.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +22,7 @@ public class NoteRepository {
 
     public Note getNoteById(int noteId) {
         // TODO find note for sharing
-        Note foundNote = new Note();
+        Note foundNote = new Note(0, "");
         foundNote.setNoteId(noteId);
         return foundNote;
     }
@@ -41,13 +41,12 @@ public class NoteRepository {
 
     protected void initFakeData() {
         for (int i = 1; i <= 30; i++) {
-            Note extraNote = new Note();
-            extraNote.setOwnerId((int)Math.round(Math.random() * 10));
+            Date randomCreated = new Date(this.getRandomTimestamp());
+            Note extraNote = new Note((int)Math.round(Math.random() * 10), String.format("Заметка от %s", randomCreated));
             extraNote.setDeleted(Math.random() < 0.5);
             extraNote.setPublic(Math.random() < 0.1);
-            extraNote.setCreated(new Date(this.getRandomTimestamp()));
+            extraNote.setCreated(randomCreated);
             extraNote.setModified(new Date(this.getRandomTimestamp()));
-            extraNote.setTitle(String.format("Заметка от %s", extraNote.getCreated()));
             if (extraNote.isDeleted()) {
                 extraNote.setText("А текст удалил");
             } else {

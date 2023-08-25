@@ -1,9 +1,9 @@
-package Entity;
+package entity;
 
 public class User {
-    private int userId = 0;
-    private boolean isAdmin = false;
-    private String login = "";
+    private int userId;
+    private boolean isAdmin;
+    private String login;
 
     public int getUserId() {
         return userId;
