@@ -1,34 +1,39 @@
 package repository;
 
+import db.Db;
 import entity.User;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class UserRepository {
+public class UserRepository extends AbstractRepository {
 
-    protected ArrayList<User> userRegistry = new ArrayList<>();
-
-    public UserRepository() {
-        this.initFakeData();
+    public UserRepository(Db db) {
+        super(db);
     }
 
-    public User getUserByLogin(String login) {
-        if (this.userRegistry.isEmpty()) {
-            throw new RuntimeException("База пользователей пуста.");
-        }
-        for (User registryUser : this.userRegistry) {
-            if (registryUser.getLogin().equals(login)) {
-                return registryUser;
+    public User getByLogin(String login) {
+        try (ResultSet results = getResult("`login` = '" + login + "'")) {
+            if (!results.next()) {
+                throw new RuntimeException("Пользователь не найден.");
             }
+
+            return makeEntity(results);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
         }
-        throw new RuntimeException("Пользователь не найден.");
     }
 
-    public User findUserById(int userId) {
-        // TODO find user for sharing
-        User foundUser = new User();
-        foundUser.setUserId(userId);
-        return foundUser;
+    public User getById(int userId) {
+        try (ResultSet results = getResult("`userId` = " + userId)) {
+            if (!results.next()) {
+                throw new RuntimeException("Пользователь не найден.");
+            }
+
+            return makeEntity(results);
+        } catch (SQLException exception) {
+            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
+        }
     }
 
     public String getLogin(int sequence) {
@@ -37,11 +42,27 @@ public class UserRepository {
 
     protected void initFakeData() {
         for (int i = 1; i <= 10; i++) {
-            User extraUser = new User();
-            extraUser.setUserId(i);
-            extraUser.setLogin(this.getLogin(i));
+            User extraUser = new User(i, getLogin(i));
             extraUser.setAdmin(Math.random() < 0.5);
-            this.userRegistry.add(extraUser);
+            save(extraUser);
         }
+    }
+
+    protected void save(User user) {
+        db.save("INSERT INTO `my_notes`.`user` (`userId`, `login`, `isAdmin`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `userId` = VALUES(`userId`), `login` = VALUES(`login`), `isAdmin` = VALUES(`isAdmin`)",
+            user.getUserId(),
+            user.getLogin(),
+            user.isAdmin()
+        );
+    }
+
+    protected User makeEntity(ResultSet result) throws SQLException {
+        User user = new User(result.getInt(1), result.getString(2));
+        user.setAdmin(result.getBoolean(3));
+        return user;
+    }
+
+    protected ResultSet getResult(String where) {
+        return db.get("SELECT `userId`, `login`, `isAdmin` FROM `my_notes`.`user` WHERE " + where);
     }
 }

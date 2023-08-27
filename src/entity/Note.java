@@ -17,7 +17,7 @@ public class Note implements Cloneable {
         this.setTitle(title);
     }
 
-    public int getNoteId() {
+    public Integer getNoteId() {
         return noteId;
     }
 
@@ -25,7 +25,7 @@ public class Note implements Cloneable {
         this.noteId = noteId;
     }
 
-    public int getOwnerId() {
+    public Integer getOwnerId() {
         return ownerId;
     }
 
@@ -49,19 +49,19 @@ public class Note implements Cloneable {
         this.text = text;
     }
 
-    public boolean isPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 
-    public void setPublic(boolean isPublic) {
+    public void setIsPublic(boolean isPublic) {
         this.isPublic = isPublic;
     }
 
-    public boolean isDeleted() {
+    public Boolean isDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(boolean isDeleted) {
+    public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 

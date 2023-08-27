@@ -5,7 +5,12 @@ public class User {
     private boolean isAdmin;
     private String login;
 
-    public int getUserId() {
+    public User(int userId, String login) {
+        this.userId = userId;
+        this.login = login;
+    }
+
+    public Integer getUserId() {
         return userId;
     }
 
@@ -13,7 +18,7 @@ public class User {
         this.userId = userId;
     }
 
-    public boolean isAdmin() {
+    public Boolean isAdmin() {
         return isAdmin;
     }
 

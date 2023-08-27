@@ -16,7 +16,7 @@ public class UserService {
             throw new RuntimeException("Авторизация с пустым логином невозможна.");
         }
 
-        User loggedUser = this.userRepository.getUserByLogin(login);
+        User loggedUser = this.userRepository.getByLogin(login);
         if (loggedUser.getUserId() <= 0) {
             throw new RuntimeException("Пользователь не найден.");
         }
@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public User get(int userId) {
-        return this.userRepository.findUserById(userId);
+        return this.userRepository.getById(userId);
     }
 
     public String generateFakeLoginByUserId(int userId) {

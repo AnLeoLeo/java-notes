@@ -8,7 +8,7 @@ import java.util.List;
 public class Notebook {
     private final NoteService noteService;
     private final UserService userService;
-    private User currentUser = new User();
+    private User currentUser;
 
     public Notebook(NoteService noteService, UserService userService) {
         this.noteService = noteService;
@@ -49,9 +49,6 @@ public class Notebook {
             return;
         }
         Note note = this.noteService.get(noteId);
-        if (note.getNoteId() <= 0) {
-            throw new RuntimeException("Заметка не найдена.");
-        }
         if (note.isPublic() || note.isDeleted()) {
             System.out.println("Такой заметкой поделиться нельзя.");
             return;

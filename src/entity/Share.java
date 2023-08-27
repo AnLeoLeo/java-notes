@@ -12,7 +12,7 @@ public class Share {
         this.setNoteId(noteId);
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
@@ -20,7 +20,7 @@ public class Share {
         this.userId = userId;
     }
 
-    public int getNoteId() {
+    public Integer getNoteId() {
         return noteId;
     }
 
