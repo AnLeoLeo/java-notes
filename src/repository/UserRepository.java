@@ -13,27 +13,11 @@ public class UserRepository extends AbstractRepository {
     }
 
     public User getByLogin(String login) {
-        try (ResultSet results = getResult("`login` = '" + login + "'")) {
-            if (!results.next()) {
-                throw new RuntimeException("Пользователь не найден.");
-            }
-
-            return makeEntity(results);
-        } catch (SQLException exception) {
-            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
-        }
+        return (User)processOne("`login` = '" + login + "'", "Пользователь не найден.");
     }
 
     public User getById(int userId) {
-        try (ResultSet results = getResult("`userId` = " + userId)) {
-            if (!results.next()) {
-                throw new RuntimeException("Пользователь не найден.");
-            }
-
-            return makeEntity(results);
-        } catch (SQLException exception) {
-            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
-        }
+        return (User)processOne("`userId` = " + userId, "Пользователь не найден.");
     }
 
     public String getLogin(int sequence) {

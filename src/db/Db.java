@@ -21,9 +21,20 @@ public class Db {
         }
     }
 
+    public void release(ResultSet results) {
+        if (results != null) {
+            try {
+                releaseStatement(results.getStatement());
+            } catch (SQLException exception) {
+                throw new RuntimeException("Не удалось вернуть соединение: " + exception.getMessage());
+            }
+        }
+    }
+
     public int save(String sql, Object... values) {
+        PreparedStatement preparedStatement = null;
         try {
-            PreparedStatement preparedStatement = datasourceProvider.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = datasourceProvider.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             initStatementFields(preparedStatement, values);
             int result = preparedStatement.executeUpdate();
             if (result <= 0) {
@@ -32,6 +43,18 @@ public class Db {
             return result;
         } catch (SQLException exception) {
             throw new RuntimeException("Соединение с mysql недоступно: " + exception.getMessage());
+        } finally {
+            releaseStatement(preparedStatement);
+        }
+    }
+
+    private void releaseStatement(Statement statement) {
+        if (statement != null) {
+            try {
+                datasourceProvider.releaseConnection(statement.getConnection());
+            } catch (SQLException exception) {
+                throw new RuntimeException("Не удалось вернуть соединение: " + exception.getMessage());
+            }
         }
     }
 

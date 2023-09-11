@@ -16,28 +16,17 @@ public class NoteRepository extends AbstractRepository {
     }
 
     public List<Note> getAll() {
-        try (ResultSet results = getResult()) {
-            List<Note> entityList = new ArrayList<>();
-            while (results.next()) {
-                entityList.add(makeEntity(results));
-            }
-
-            return entityList;
-        } catch (SQLException exception) {
-            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
+        List<Object> entityList = new ArrayList<>();
+        processResults("1", entityList);
+        List<Note> noteList = new ArrayList<>();
+        for (Object note : entityList) {
+            noteList.add((Note) note);
         }
+        return noteList;
     }
 
     public Note getById(int noteId) {
-        try (ResultSet results = getResult("`noteId` = " + noteId)) {
-            if (!results.next()) {
-                throw new RuntimeException("Заметка не найдена.");
-            }
-
-            return makeEntity(results);
-        } catch (SQLException exception) {
-            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
-        }
+        return (Note)processOne("`noteId` = " + noteId, "Заметка не найдена.");
     }
 
     public int save(Note note) {
@@ -78,10 +67,6 @@ public class NoteRepository extends AbstractRepository {
         note.setCreated(new Date((long)result.getInt(7) * 1000));
         note.setModified(new Date((long)result.getInt(8) * 1000));
         return note;
-    }
-
-    protected ResultSet getResult() {
-        return getResult("1");
     }
 
     protected ResultSet getResult(String where) {

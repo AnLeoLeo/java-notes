@@ -15,11 +15,7 @@ public class ShareRepository extends AbstractRepository {
     }
 
     public boolean hasShare(Note currentNote, User user) {
-        try (ResultSet results = getResult(user.getUserId(), currentNote.getNoteId())) {
-            return results.next();
-        } catch (SQLException exception) {
-            throw new RuntimeException("Ошибка получения данных: " + exception.getMessage());
-        }
+         return (Boolean)processOne("`userId` = " + user.getUserId() + " AND `noteId` = " + currentNote.getNoteId(), "");
     }
 
     public boolean save(Share share) {
@@ -30,8 +26,12 @@ public class ShareRepository extends AbstractRepository {
         ) > 0;
     }
 
-    protected ResultSet getResult(int userId, int noteId) {
-        return db.get("SELECT `userId`, `noteId`, UNIX_TIMESTAMP(`modified`) FROM `my_notes`.`share` WHERE `userId` = " + userId + " AND `noteId` = " + noteId);
+    protected ResultSet getResult(String where) {
+        return db.get("SELECT `userId`, `noteId`, UNIX_TIMESTAMP(`modified`) FROM `my_notes`.`share` WHERE " + where);
+    }
+
+    protected Boolean makeEntity(ResultSet result) throws SQLException {
+        return result.next();
     }
 
     protected void initFakeData() {}
