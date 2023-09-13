@@ -1,3 +1,5 @@
+package notebook;
+
 import entity.Note;
 import service.NoteService;
 import service.UserService;
@@ -9,34 +11,39 @@ public class Notebook {
     private final NoteService noteService;
     private final UserService userService;
     private User currentUser;
+    private Messenger messenger;
 
     public Notebook(NoteService noteService, UserService userService) {
         this.noteService = noteService;
         this.userService = userService;
     }
 
+    public interface Messenger {
+        void println(String text);
+    }
+
+    public void setMessenger(Messenger messenger) {
+        this.messenger = messenger;
+    }
+
     public void openForUserId(int userId) {
         this.currentUser = this.userService.login(this.userService.generateFakeLoginByUserId(userId));
         if (this.currentUser.isAdmin()) {
-            System.out.println("Сегодня я админ и вижу всё.\n");
+            messenger.println("Сегодня я админ и вижу всё.\n");
         }
     }
 
     public void showContents() {
         List<Note> personalNotes = this.noteService.getPersonalNotes(this.currentUser);
 
-        System.out.printf("И оказалось тут вот сколько заметок: %d\n\n", personalNotes.size());
-        System.out.println(personalNotes);
+        messenger.println(String.format("И оказалось тут вот сколько заметок: %d\n\n", personalNotes.size()));
+        messenger.println(personalNotes.toString());
     }
 
-    public int addNote() {
-        System.out.println("Добавим ещё одну");
+    public void addNote(String title, String text) {
+        messenger.println("Добавим ещё одну");
 
-        return this.noteService.add(
-                "А такой заметки ещё не было",
-                "Как-то открыл я эту программу и написал её.",
-                this.currentUser.getUserId()
-        );
+        this.noteService.add(title, text, this.currentUser.getUserId());
     }
 
     public void shareNote(int noteId, int userId) {
@@ -45,16 +52,16 @@ public class Notebook {
             throw new RuntimeException("Пользователь не найден.");
         }
         if (user.isAdmin()) {
-            System.out.println("С админом не надо делиться, он и так всё видит.");
+            messenger.println("С админом не надо делиться, он и так всё видит.");
             return;
         }
         Note note = this.noteService.get(noteId);
         if (note.isPublic() || note.isDeleted()) {
-            System.out.println("Такой заметкой поделиться нельзя.");
+            messenger.println("Такой заметкой поделиться нельзя.");
             return;
         }
         this.noteService.share(note, user);
 
-        System.out.printf("Теперь заметку № %d видит пользователь %d.\n", noteId, userId);
+        messenger.println(String.format("Теперь заметку № %d видит пользователь %d.\n", noteId, userId));
     }
 }

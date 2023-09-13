@@ -2,7 +2,7 @@ package db;
 
 public class DatasourceConfig implements DatasourceConfigInterface {
     private final String server = "localhost";
-    private final int port = 3306;
+    private final int port = 3307;
     private final String user = "root";
     private final String password = "root";
     private final String database = "my_notes";

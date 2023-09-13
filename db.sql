@@ -1,4 +1,4 @@
-CREATE DATABASE `my_notes` CHARACTER SET 'utf8mb4';
+-- CREATE DATABASE `my_notes` CHARACTER SET 'utf8mb4';
 
 USE `my_notes`;
 

@@ -1,3 +1,5 @@
+package app;
+
 import db.DatasourceConfig;
 import db.DatasourceConfigInterface;
 
